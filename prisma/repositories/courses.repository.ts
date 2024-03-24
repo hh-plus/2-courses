@@ -5,8 +5,8 @@ import { PrismaService } from './prisma.service';
 export class CoursesRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  getOne(id: number) {
-    return this.prisma.course.findUnique({
+  async getOne(id: number) {
+    return await this.prisma.course.findUnique({
       where: {
         id,
       },
