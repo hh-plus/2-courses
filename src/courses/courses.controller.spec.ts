@@ -4,14 +4,10 @@ import { CoursesService } from './courses.service';
 
 describe('CoursesController', () => {
   let controller: CoursesController;
+  let courseService: CoursesService;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [CoursesController],
-      providers: [CoursesService],
-    }).compile();
-
-    controller = module.get<CoursesController>(CoursesController);
+    controller = new CoursesController(courseService);
   });
 
   it('should be defined', () => {

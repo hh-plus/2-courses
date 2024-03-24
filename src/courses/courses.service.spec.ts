@@ -1,18 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CoursesService } from './courses.service';
+import { CoursesRepositoryPort } from './port/courses.repository.interface';
 
 describe('CoursesService', () => {
   let service: CoursesService;
-
+  let coursesRepositoryPort: CoursesRepositoryPort;
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [CoursesService],
-    }).compile();
-
-    service = module.get<CoursesService>(CoursesService);
+    service = new CoursesService(coursesRepositoryPort);
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  describe('apply', () => {
+    it('존재해야 한다.', () => {
+      expect(service.apply).toBeDefined();
+    });
   });
 });
