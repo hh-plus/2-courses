@@ -31,5 +31,19 @@ describe('CoursesService', () => {
 
       expect(coursesUserRepository.create).toHaveBeenCalled();
     });
+
+    it('courseId가 없으면 에러를 던져야한다.', async () => {
+      const courseId = undefined;
+      const userId = 1;
+
+      await expect(service.apply({ courseId, userId })).rejects.toThrow();
+    });
+
+    it('userId가 없으면 에러를 던져야한다.', async () => {
+      const courseId = 1;
+      const userId = undefined;
+
+      await expect(service.apply({ courseId, userId })).rejects.toThrow();
+    });
   });
 });

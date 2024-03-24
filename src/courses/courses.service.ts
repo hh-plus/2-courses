@@ -13,6 +13,10 @@ export class CoursesService {
   async getOne({ courseId }: { courseId: number }) {}
 
   async apply({ courseId, userId }: { courseId: number; userId: number }) {
+    if (!courseId || !userId) {
+      throw new Error('courseId, userId는 필수입니다.');
+    }
+
     await this.coursesUserRepository.create({
       courseId,
       userId,
