@@ -3,8 +3,6 @@ import { CoursesRepositoryPort } from './port/courses.repository.interface';
 import { CoursesUserRepositoryPort } from './port/courses-user.repository.port';
 import { Course, Prisma, User } from '@prisma/client';
 
-type CourseWithUser = Pick<Course, 'maxUsers'> & { user: Pick<User, 'id'>[] };
-
 @Injectable()
 export class CoursesService {
   constructor(
@@ -12,9 +10,19 @@ export class CoursesService {
     private readonly coursesUserRepository: CoursesUserRepositoryPort,
   ) {}
 
-  async getOne({ courseId }: { courseId: number }) {}
+  async getOneIncludeUsers({ courseId }: { courseId: number }) {
+    if (!courseId) {
+      throw new Error('courseId는 필수입니다.');
+    }
 
-  async checkFull({ course }: { course: CourseWithUser }) {
+    return await this.coursesRepository.getOneIncludeUsers({ courseId });
+  }
+
+  async checkFull({
+    course,
+  }: {
+    course: Pick<Course, 'maxUsers'> & { user: Pick<User, 'id'>[] };
+  }) {
     if (course.user.length >= course.maxUsers) {
       throw new Error('정원이 초과되었습니다.');
     }

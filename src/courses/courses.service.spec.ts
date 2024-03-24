@@ -6,7 +6,11 @@ import { CourseUser, User } from '@prisma/client';
 
 describe('CoursesService', () => {
   let service: CoursesService;
-  let coursesRepositoryPort: CoursesRepositoryPort;
+  let coursesRepositoryPort: CoursesRepositoryPort = {
+    getOne: jest.fn(),
+    create: jest.fn(),
+    getOneIncludeUsers: jest.fn(),
+  };
   let coursesUserRepository: CoursesUserRepositoryPort = {
     create: jest.fn(),
   };
@@ -32,6 +36,26 @@ describe('CoursesService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  describe('getOneIncludeUsers', () => {
+    it('존재해야 한다.', () => {
+      expect(service.getOneIncludeUsers).toBeDefined();
+    });
+
+    it('courseId가 없으면 에러를 던져야한다.', async () => {
+      const courseId = undefined;
+
+      await expect(service.getOneIncludeUsers({ courseId })).rejects.toThrow();
+    });
+
+    it('coursesRepositoryPort.getOne을 호출해야한다.', async () => {
+      const courseId = 1;
+
+      await service.getOneIncludeUsers({ courseId });
+
+      expect(coursesRepositoryPort.getOneIncludeUsers).toHaveBeenCalled();
+    });
   });
 
   describe('checkFull', () => {
