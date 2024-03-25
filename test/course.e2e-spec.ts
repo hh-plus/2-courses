@@ -126,7 +126,7 @@ describe('Courses', () => {
         },
       });
 
-      const userCount = 15;
+      const userCount = 11;
       let userIds = [];
       for (let i = 1; i <= userCount; i++) {
         await prismaService.user.create({
@@ -149,5 +149,12 @@ describe('Courses', () => {
         expect(err).toBeDefined();
       }
     });
+  });
+
+  afterEach(async () => {
+    await prismaService.courseUser.deleteMany();
+    await prismaService.course.deleteMany();
+    await prismaService.user.deleteMany();
+    await app.close();
   });
 });

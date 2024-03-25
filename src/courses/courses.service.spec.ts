@@ -14,6 +14,7 @@ describe('CoursesService', () => {
   };
   const coursesUserRepository: CoursesUserRepositoryPort = {
     create: jest.fn(),
+    getOne: jest.fn(),
   };
 
   const courseUser: CourseUser = {
@@ -55,6 +56,9 @@ describe('CoursesService', () => {
     it('coursesRepositoryPort.getOne을 호출해야한다.', async () => {
       const courseId = 1;
 
+      coursesRepositoryPort.getOneIncludeUsers = jest
+        .fn()
+        .mockResolvedValue({ id: 1 });
       await service.getOneIncludeUsers({ courseId, transaction });
 
       expect(coursesRepositoryPort.getOneIncludeUsers).toHaveBeenCalled();
