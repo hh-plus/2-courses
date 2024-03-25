@@ -1,15 +1,39 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
-import { Prisma } from '@prisma/client';
+import { Course, Prisma, User } from '@prisma/client';
+import { QueryClient } from './utils/query-client';
+
+export interface CourseModelPort {
+  getOneIncludeUsers({
+    courseId,
+    transaction,
+  }: {
+    courseId: number;
+    transaction: Prisma.TransactionClient;
+  }): Promise<Course & { user: User[] }>;
+  getOne({
+    courseId,
+    transaction,
+  }: {
+    courseId: number;
+    transaction?: Prisma.TransactionClient;
+  }): Promise<Course>;
+}
 
 @Injectable()
-export class CoursesRepository {
-  constructor(private readonly prisma: PrismaService) {}
+export class CoursesRepository implements CourseModelPort {
+  // constructor() {}
 
-  async getOneIncludeUsers(id: number) {
-    return await this.prisma.course.findUnique({
+  async getOneIncludeUsers({
+    courseId,
+    transaction,
+  }: {
+    courseId: number;
+    transaction: Prisma.TransactionClient;
+  }): Promise<Course & { user: User[] }> {
+    return await transaction.course.findUnique({
       where: {
-        id,
+        id: courseId,
       },
       include: {
         user: true,
@@ -23,8 +47,8 @@ export class CoursesRepository {
   }: {
     courseId: number;
     transaction?: Prisma.TransactionClient;
-  }) {
-    return await this.prisma.course.findUnique({
+  }): Promise<Course> {
+    return await transaction.course.findUnique({
       where: {
         id: courseId,
       },

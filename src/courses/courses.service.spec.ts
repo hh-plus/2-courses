@@ -6,12 +6,12 @@ import { CourseUser, User } from '@prisma/client';
 
 describe('CoursesService', () => {
   let service: CoursesService;
-  let coursesRepositoryPort: CoursesRepositoryPort = {
+  const coursesRepositoryPort: CoursesRepositoryPort = {
     getOne: jest.fn(),
-    create: jest.fn(),
+    // create: jest.fn(),
     getOneIncludeUsers: jest.fn(),
   };
-  let coursesUserRepository: CoursesUserRepositoryPort = {
+  const coursesUserRepository: CoursesUserRepositoryPort = {
     create: jest.fn(),
   };
 

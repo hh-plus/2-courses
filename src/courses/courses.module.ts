@@ -11,6 +11,7 @@ import { CoursesUserRepositoryPort } from './port/courses-user.repository.port';
   controllers: [CoursesController],
   providers: [
     PrismaService,
+
     CoursesService,
     { provide: CoursesRepositoryPort, useClass: CoursesRepository },
     { provide: CoursesUserRepositoryPort, useClass: CoursesRepository },

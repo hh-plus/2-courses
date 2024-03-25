@@ -1,5 +1,7 @@
-import { CoursesUserRepository } from '@/prisma/repositories/courses-user.repository';
-export abstract class CoursesUserRepositoryPort {
+import { CoursesUserModelPort } from '@/prisma/repositories/courses-user.repository';
+export abstract class CoursesUserRepositoryPort
+  implements CoursesUserModelPort
+{
   create: ({
     courseId,
     userId,

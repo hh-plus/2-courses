@@ -1,8 +1,9 @@
+import { CourseModelPort } from '@/prisma/repositories/courses.repository';
 import { Course, User } from '@prisma/client';
 
-export abstract class CoursesRepositoryPort {
+export abstract class CoursesRepositoryPort implements CourseModelPort {
   getOne: ({ courseId }: { courseId: number }) => Promise<Course>;
-  create: (course: Course) => Promise<Course>;
+
   getOneIncludeUsers: ({
     courseId,
   }: {
