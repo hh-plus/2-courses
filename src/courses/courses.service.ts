@@ -10,12 +10,27 @@ export class CoursesService {
     private readonly coursesUserRepository: CoursesUserRepositoryPort,
   ) {}
 
-  async getOneIncludeUsers({ courseId }: { courseId: number }) {
+  async getOneIncludeUsers({
+    courseId,
+    transaction,
+  }: {
+    courseId: number;
+    transaction: Prisma.TransactionClient;
+  }) {
     if (!courseId) {
       throw new Error('courseId는 필수입니다.');
     }
 
-    return await this.coursesRepository.getOneIncludeUsers({ courseId });
+    const course = await this.coursesRepository.getOneIncludeUsers({
+      courseId,
+      transaction,
+    });
+
+    if (!course) {
+      throw new Error('해당 강의가 존재하지 않습니다.');
+    }
+
+    return course;
   }
 
   async checkFull({
@@ -28,7 +43,15 @@ export class CoursesService {
     }
   }
 
-  async apply({ courseId, userId }: { courseId: number; userId: number }) {
+  async apply({
+    courseId,
+    userId,
+    transaction,
+  }: {
+    courseId: number;
+    userId: number;
+    transaction: Prisma.TransactionClient;
+  }) {
     if (!courseId || !userId) {
       throw new Error('courseId, userId는 필수입니다.');
     }
@@ -36,6 +59,7 @@ export class CoursesService {
     await this.coursesUserRepository.create({
       courseId,
       userId,
+      transaction,
     });
   }
 }

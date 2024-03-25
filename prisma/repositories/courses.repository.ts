@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 import { Course, Prisma, User } from '@prisma/client';
-import { QueryClient } from './utils/query-client';
 
 export interface CourseModelPort {
   getOneIncludeUsers({

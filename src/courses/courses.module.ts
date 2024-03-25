@@ -5,6 +5,7 @@ import { CoursesRepository } from '@/prisma/repositories/courses.repository';
 import { CoursesRepositoryPort } from './port/courses.repository.interface';
 import { PrismaService } from '@/prisma/repositories/prisma.service';
 import { CoursesUserRepositoryPort } from './port/courses-user.repository.port';
+import { CoursesUserRepository } from '@/prisma/repositories/courses-user.repository';
 
 @Module({
   imports: [],
@@ -14,7 +15,7 @@ import { CoursesUserRepositoryPort } from './port/courses-user.repository.port';
 
     CoursesService,
     { provide: CoursesRepositoryPort, useClass: CoursesRepository },
-    { provide: CoursesUserRepositoryPort, useClass: CoursesRepository },
+    { provide: CoursesUserRepositoryPort, useClass: CoursesUserRepository },
   ],
 })
 export class CoursesModule {}

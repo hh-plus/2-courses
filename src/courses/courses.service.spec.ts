@@ -2,10 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CoursesService } from './courses.service';
 import { CoursesRepositoryPort } from './port/courses.repository.interface';
 import { CoursesUserRepositoryPort } from './port/courses-user.repository.port';
-import { CourseUser, User } from '@prisma/client';
+import { CourseUser, Prisma, User } from '@prisma/client';
 
 describe('CoursesService', () => {
   let service: CoursesService;
+  let transaction: Prisma.TransactionClient;
   const coursesRepositoryPort: CoursesRepositoryPort = {
     getOne: jest.fn(),
     // create: jest.fn(),
@@ -46,13 +47,15 @@ describe('CoursesService', () => {
     it('courseId가 없으면 에러를 던져야한다.', async () => {
       const courseId = undefined;
 
-      await expect(service.getOneIncludeUsers({ courseId })).rejects.toThrow();
+      await expect(
+        service.getOneIncludeUsers({ courseId, transaction }),
+      ).rejects.toThrow();
     });
 
     it('coursesRepositoryPort.getOne을 호출해야한다.', async () => {
       const courseId = 1;
 
-      await service.getOneIncludeUsers({ courseId });
+      await service.getOneIncludeUsers({ courseId, transaction });
 
       expect(coursesRepositoryPort.getOneIncludeUsers).toHaveBeenCalled();
     });
@@ -91,7 +94,7 @@ describe('CoursesService', () => {
       const courseId = 1;
       const userId = 1;
 
-      await service.apply({ courseId, userId });
+      await service.apply({ courseId, userId, transaction });
 
       expect(coursesUserRepository.create).toHaveBeenCalled();
     });
@@ -100,14 +103,18 @@ describe('CoursesService', () => {
       const courseId = undefined;
       const userId = 1;
 
-      await expect(service.apply({ courseId, userId })).rejects.toThrow();
+      await expect(
+        service.apply({ courseId, userId, transaction }),
+      ).rejects.toThrow();
     });
 
     it('userId가 없으면 에러를 던져야한다.', async () => {
       const courseId = 1;
       const userId = undefined;
 
-      await expect(service.apply({ courseId, userId })).rejects.toThrow();
+      await expect(
+        service.apply({ courseId, userId, transaction }),
+      ).rejects.toThrow();
     });
   });
 });
