@@ -14,7 +14,7 @@ export class UsersController {
     @Query('userId', ParseIntPipe) userId: number,
     @Query('courseId', ParseIntPipe) courseId: number,
   ) {
-    return await this.prismaservice.$transaction(async (transaction) => {
+    await this.prismaservice.$transaction(async (transaction) => {
       return await this.usersService.getOne({
         userId,
         courseId,

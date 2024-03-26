@@ -65,6 +65,40 @@ describe('CoursesService', () => {
     });
   });
 
+  describe('checkDuplicate', () => {
+    it('존재해야 한다.', () => {
+      expect(service.checkDuplicate).toBeDefined();
+    });
+
+    it('courseId가 없으면 에러를 던져야한다.', async () => {
+      const courseId = undefined;
+      const userId = 1;
+
+      await expect(
+        service.checkDuplicate({ courseId, userId, transaction }),
+      ).rejects.toThrow();
+    });
+
+    it('userId가 없으면 에러를 던져야한다.', async () => {
+      const courseId = 1;
+      const userId = undefined;
+
+      await expect(
+        service.checkDuplicate({ courseId, userId, transaction }),
+      ).rejects.toThrow();
+    });
+
+    it('이미 신청한 강의일 때 에러를 던져야한다.', async () => {
+      const courseId = 1;
+      const userId = 1;
+
+      coursesUserRepository.getOne = jest.fn().mockResolvedValue(courseUser);
+      await expect(
+        service.checkDuplicate({ courseId, userId, transaction }),
+      ).rejects.toThrow();
+    });
+  });
+
   describe('checkFull', () => {
     it('존재해야 한다.', () => {
       expect(service.checkFull).toBeDefined();

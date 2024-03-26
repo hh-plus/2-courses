@@ -18,6 +18,8 @@ describe('Courses', () => {
     app = moduleFixture.createNestApplication();
     await app.init();
 
+    moduleFixture.useLogger(false);
+
     prismaService = moduleFixture.get<PrismaService>(PrismaService);
 
     // 테스트 전에 데이터를 모두 삭제한다.

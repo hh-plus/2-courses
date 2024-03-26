@@ -18,9 +18,6 @@ export class CoursesController {
     private readonly coursesService: CoursesService,
   ) {}
 
-  @Get('/')
-  async getOne() {}
-
   // 로그인을 구현하지 않았으니 userId를 쿼리로 받는다고 가정.
   @Post('/apply/:courseId')
   async apply(
