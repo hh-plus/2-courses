@@ -57,6 +57,16 @@ export class CoursesService {
     }
   }
 
+  async checkPassedStartTime({
+    course,
+  }: {
+    course: Pick<Course, 'startDate'>;
+  }) {
+    if (new Date(course.startDate) < new Date()) {
+      throw new Error('시작 시간이 지났습니다.');
+    }
+  }
+
   async checkFull({
     course,
   }: {

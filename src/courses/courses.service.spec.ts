@@ -99,6 +99,20 @@ describe('CoursesService', () => {
     });
   });
 
+  describe('checkPassedStartTime', () => {
+    it('존재해야 한다.', () => {
+      expect(service.checkPassedStartTime).toBeDefined();
+    });
+
+    it('시작 시간이 지났을 때 에러를 던져야한다.', async () => {
+      const course = {
+        startDate: new Date('2021-01-01'),
+      };
+
+      await expect(service.checkPassedStartTime({ course })).rejects.toThrow();
+    });
+  });
+
   describe('checkFull', () => {
     it('존재해야 한다.', () => {
       expect(service.checkFull).toBeDefined();
