@@ -35,7 +35,13 @@ export class CoursesController {
               courseId,
               transaction,
             });
-            await this.coursesService.checkFull({ course });
+            this.coursesService.checkFull({ course });
+            this.coursesService.checkDuplicate({
+              userId,
+              courseId: course.id,
+              transaction,
+            });
+            this.coursesService.checkPassedStartTime({ course });
             await this.coursesService.apply({
               userId,
               courseId: course.id,
