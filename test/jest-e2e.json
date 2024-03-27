@@ -7,7 +7,6 @@
     "^.+\\.(t|j)s$": "ts-jest"
   },
 
-  "silent": true,
   "moduleNameMapper": {
     "^@/(.*)$": "<rootDir>/$1"
   }

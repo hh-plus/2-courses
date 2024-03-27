@@ -18,7 +18,7 @@ model Course {
   title     String
   user      CourseUser[]
   maxUsers  Int          @default(0)
-  startDate DateTime?
+  startDate DateTime
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

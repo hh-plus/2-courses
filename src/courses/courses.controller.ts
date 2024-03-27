@@ -36,7 +36,7 @@ export class CoursesController {
               transaction,
             });
             this.coursesService.checkFull({ course });
-            this.coursesService.checkDuplicate({
+            await this.coursesService.checkDuplicate({
               userId,
               courseId: course.id,
               transaction,

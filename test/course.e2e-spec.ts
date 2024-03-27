@@ -4,6 +4,7 @@ import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import * as request from 'supertest';
+import { setDate } from './utils/setDate';
 
 describe('Courses', () => {
   let app: INestApplication;
@@ -26,19 +27,19 @@ describe('Courses', () => {
     createCourse = async ({
       title,
       maxUsers,
-      calcurateStartDateNumber = +1,
+      calcurateStartDateNumber,
     }: {
       title: string;
       maxUsers: number;
       calcurateStartDateNumber?: number;
     }) => {
-      const date = new Date();
-      date.setDate(date.getDate() + calcurateStartDateNumber);
+      const startDate = setDate(calcurateStartDateNumber || 1);
+
       return await prismaService.course.create({
         data: {
           title,
           maxUsers,
-          startDate: date,
+          startDate,
         },
       });
     };
@@ -76,11 +77,9 @@ describe('Courses', () => {
   });
 
   it('정원이 초과되면 에러를 던져야 한다.', async () => {
-    const newCourse = await prismaService.course.create({
-      data: {
-        title: '특강',
-        maxUsers: 1,
-      },
+    const newCourse = await createCourse({
+      title: '특강',
+      maxUsers: 1,
     });
 
     await prismaService.user.create({

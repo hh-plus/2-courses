@@ -14,12 +14,17 @@ export class UsersController {
     @Query('userId', ParseIntPipe) userId: number,
     @Query('courseId', ParseIntPipe) courseId: number,
   ) {
+    let result = null;
     await this.prismaservice.$transaction(async (transaction) => {
-      return await this.usersService.getOne({
+      const message = await this.usersService.getOne({
         userId,
         courseId,
         transaction,
       });
+      result = message;
     });
+    return {
+      message: result,
+    };
   }
 }
