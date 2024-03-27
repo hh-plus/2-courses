@@ -1,14 +1,15 @@
-import { PrismaService } from '@/prisma/repositories/prisma.service';
+import { PrismaService } from '@/prisma/prisma.service';
 import { AppModule } from '@/src/app.module';
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Prisma } from '@prisma/client';
 
 import * as request from 'supertest';
 
 describe('Courses', () => {
   let app: INestApplication;
   let prismaService: PrismaService;
+
+  let createCourse = null;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -22,6 +23,26 @@ describe('Courses', () => {
 
     prismaService = moduleFixture.get<PrismaService>(PrismaService);
 
+    createCourse = async ({
+      title,
+      maxUsers,
+      calcurateStartDateNumber = +1,
+    }: {
+      title: string;
+      maxUsers: number;
+      calcurateStartDateNumber?: number;
+    }) => {
+      const date = new Date();
+      date.setDate(date.getDate() + calcurateStartDateNumber);
+      return await prismaService.course.create({
+        data: {
+          title,
+          maxUsers,
+          startDate: date,
+        },
+      });
+    };
+
     // 테스트 전에 데이터를 모두 삭제한다.
     await prismaService.courseUser.deleteMany();
     await prismaService.course.deleteMany();
@@ -30,11 +51,9 @@ describe('Courses', () => {
 
   it('특강에 신청을 하면 저장되어야 한다.', async () => {
     const userCount = 11;
-    let newCourse = await prismaService.course.create({
-      data: {
-        title: '특강',
-        maxUsers: 10,
-      },
+    const newCourse = await createCourse({
+      title: '특강',
+      maxUsers: userCount,
     });
 
     for (let i = 1; i <= userCount; i++) {
@@ -89,15 +108,13 @@ describe('Courses', () => {
 
   describe('동시성 테스트', () => {
     it('짧은 시간에 여러 요청이 들어와도 정원에 맞는 인원만을 성공으로 처리해야하고 나머지는 실패해야한다.', async () => {
-      const newCourse = await prismaService.course.create({
-        data: {
-          title: '특강',
-          maxUsers: 4,
-        },
+      const newCourse = await createCourse({
+        title: '특강',
+        maxUsers: 5,
       });
 
       const userCount = 5;
-      let userIds = [];
+      const userIds = [];
       for (let i = 1; i <= userCount; i++) {
         await prismaService.user.create({
           data: {
@@ -121,15 +138,13 @@ describe('Courses', () => {
     });
 
     it('수를 늘려본다', async () => {
-      const newCourse = await prismaService.course.create({
-        data: {
-          title: '특강',
-          maxUsers: 10,
-        },
+      const newCourse = await createCourse({
+        title: '특강',
+        maxUsers: 10,
       });
 
       const userCount = 11;
-      let userIds = [];
+      const userIds = [];
       for (let i = 1; i <= userCount; i++) {
         await prismaService.user.create({
           data: {

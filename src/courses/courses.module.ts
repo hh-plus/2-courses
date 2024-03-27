@@ -3,7 +3,7 @@ import { CoursesService } from './courses.service';
 import { CoursesController } from './courses.controller';
 import { CoursesRepository } from '@/prisma/repositories/courses.repository';
 import { CoursesRepositoryPort } from './port/courses.repository.interface';
-import { PrismaService } from '@/prisma/repositories/prisma.service';
+import { PrismaService } from '@/prisma/prisma.service';
 import { CoursesUserRepositoryPort } from './port/courses-user.repository.port';
 import { CoursesUserRepository } from '@/prisma/repositories/courses-user.repository';
 

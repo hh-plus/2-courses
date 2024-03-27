@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { CoursesService } from './courses.service';
 
-import { PrismaService } from '@/prisma/repositories/prisma.service';
+import { PrismaService } from '@/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 
 @Controller('courses')
