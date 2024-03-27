@@ -8,6 +8,26 @@ describe('CoursesService', () => {
   let service: CoursesService;
   let transaction: Prisma.TransactionClient;
   const coursesRepositoryPort: CoursesRepositoryPort = {
+    getAll: jest.fn((transaction) =>
+      Promise.resolve([
+        {
+          id: 1,
+          title: '특강',
+          maxUsers: 2,
+          startDate: new Date('2025-01-01'),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: 1,
+          title: '특강2',
+          maxUsers: 5,
+          startDate: new Date('2025-01-01'),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ]),
+    ),
     getOne: jest.fn(),
     // create: jest.fn(),
     getOneIncludeUsers: jest.fn(),
@@ -38,6 +58,18 @@ describe('CoursesService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  describe('getAll', () => {
+    it('존재해야 한다.', () => {
+      expect(service.getAll).toBeDefined();
+    });
+
+    it('coursesRepositoryPort.getAll을 호출해야한다.', async () => {
+      await service.getAll({});
+
+      expect(coursesRepositoryPort.getAll).toHaveBeenCalled();
+    });
   });
 
   describe('getOneIncludeUsers', () => {
@@ -109,7 +141,7 @@ describe('CoursesService', () => {
         startDate: new Date('2021-01-01'),
       };
 
-      await expect(service.checkPassedStartTime({ course })).rejects.toThrow();
+      expect(() => service.checkPassedStartTime({ course })).toThrow();
     });
   });
 
@@ -124,7 +156,7 @@ describe('CoursesService', () => {
         maxUsers: 2,
       };
 
-      await expect(service.checkFull({ course })).rejects.toThrow();
+      expect(() => service.checkFull({ course })).toThrow();
     });
 
     it('정원이 초과되지 않았을 때 에러를 던지지 않아야한다.', async () => {
@@ -133,7 +165,7 @@ describe('CoursesService', () => {
         maxUsers: 2,
       };
 
-      await expect(service.checkFull({ course })).resolves.not.toThrow();
+      expect(() => service.checkFull({ course })).not.toThrow();
     });
   });
 

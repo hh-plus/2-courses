@@ -10,6 +10,10 @@ export class CoursesService {
     private readonly coursesUserRepository: CoursesUserRepositoryPort,
   ) {}
 
+  async getAll({}) {
+    return await this.coursesRepository.getAll({});
+  }
+
   async getOneIncludeUsers({
     courseId,
     transaction,
