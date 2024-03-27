@@ -3,6 +3,8 @@ import { PrismaService } from '../prisma.service';
 import { Course, Prisma, User } from '@prisma/client';
 
 export interface CourseModelPort {
+  getAll({}): Promise<(Course & { user: User[] })[]>;
+
   getOneIncludeUsers({
     courseId,
     transaction,
@@ -21,7 +23,27 @@ export interface CourseModelPort {
 
 @Injectable()
 export class CoursesRepository implements CourseModelPort {
-  // constructor() {}
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async getAll({}): Promise<(Course & { user: User[] })[]> {
+    const currentDate = new Date();
+    return await this.prismaService.course.findMany({
+      include: {
+        user: {
+          select: {
+            id: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
+      },
+      where: {
+        startDate: {
+          gte: currentDate,
+        },
+      },
+    });
+  }
 
   async getOneIncludeUsers({
     courseId,

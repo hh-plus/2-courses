@@ -60,6 +60,26 @@ describe('Courses', () => {
     await prisma.user.deleteMany();
   });
 
+  describe('GET /courses', () => {
+    it('정상적으로 강의 목록을 가져온다.', async () => {
+      await createCourse({
+        title: '특강',
+        maxUsers: 5,
+      });
+
+      await createCourse({
+        title: '특강2',
+        maxUsers: 5,
+      });
+
+      const res = await request(app.getHttpServer())
+        .get('/courses')
+        .expect(200);
+      console.log(res.body);
+      expect(res.body.length).toBe(2);
+    });
+  });
+
   it('특강에 신청을 하면 저장되어야 한다.', async () => {
     const userCount = 11;
     const newCourse = await createCourse({

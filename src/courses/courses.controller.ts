@@ -18,6 +18,11 @@ export class CoursesController {
     private readonly coursesService: CoursesService,
   ) {}
 
+  @Get()
+  async getAll() {
+    return await this.coursesService.getAll({});
+  }
+
   // 로그인을 구현하지 않았으니 userId를 쿼리로 받는다고 가정.
   @Post('/apply/:courseId')
   async apply(
@@ -37,12 +42,12 @@ export class CoursesController {
             });
 
             this.coursesService.checkFull({ course });
+            this.coursesService.checkPassedStartTime({ course });
             await this.coursesService.checkDuplicate({
               userId,
               courseId: course.id,
               transaction,
             });
-            this.coursesService.checkPassedStartTime({ course });
             await this.coursesService.apply({
               userId,
               courseId: course.id,

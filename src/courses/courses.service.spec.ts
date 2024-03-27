@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CoursesService } from './courses.service';
-import { CoursesRepositoryPort } from './port/courses.repository.interface';
+import { CoursesRepositoryPort } from './port/courses.repository.port';
 import { CoursesUserRepositoryPort } from './port/courses-user.repository.port';
 import { CourseUser, Prisma, User } from '@prisma/client';
 
@@ -17,6 +17,7 @@ describe('CoursesService', () => {
           startDate: new Date('2025-01-01'),
           createdAt: new Date(),
           updatedAt: new Date(),
+          user: [],
         },
         {
           id: 1,
@@ -25,6 +26,7 @@ describe('CoursesService', () => {
           startDate: new Date('2025-01-01'),
           createdAt: new Date(),
           updatedAt: new Date(),
+          user: [],
         },
       ]),
     ),
