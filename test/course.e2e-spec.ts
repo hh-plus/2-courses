@@ -57,22 +57,22 @@ describe('Courses', () => {
       maxUsers: userCount,
     });
 
+    const user = [];
     for (let i = 1; i <= userCount; i++) {
-      await prismaService.user.create({
-        data: {
-          id: i,
-        },
+      const newUser = await prismaService.user.create({
+        data: {},
       });
+      user.push(newUser);
     }
 
     await request(app.getHttpServer())
       .post(`/courses/apply/${newCourse.id}`)
-      .query({ userId: 1 })
+      .query({ userId: user[0].id })
       .expect(201);
 
     await request(app.getHttpServer())
       .post(`/courses/apply/${newCourse.id}`)
-      .query({ userId: 2 })
+      .query({ userId: user[1].id })
       .expect(201);
   });
 
@@ -82,26 +82,22 @@ describe('Courses', () => {
       maxUsers: 1,
     });
 
-    await prismaService.user.create({
-      data: {
-        id: 1,
-      },
+    const user1 = await prismaService.user.create({
+      data: {},
     });
 
-    await prismaService.user.create({
-      data: {
-        id: 2,
-      },
+    const user2 = await prismaService.user.create({
+      data: {},
     });
 
     await request(app.getHttpServer())
       .post(`/courses/apply/${newCourse.id}`)
-      .query({ userId: 1 })
+      .query({ userId: user1.id })
       .expect(201);
 
     await request(app.getHttpServer())
       .post(`/courses/apply/${newCourse.id}`)
-      .query({ userId: 2 })
+      .query({ userId: user2.id })
       .expect(500);
   });
 
@@ -115,12 +111,10 @@ describe('Courses', () => {
       const userCount = 5;
       const userIds = [];
       for (let i = 1; i <= userCount; i++) {
-        await prismaService.user.create({
-          data: {
-            id: i,
-          },
+        const newUser = await prismaService.user.create({
+          data: {},
         });
-        userIds.push(i);
+        userIds.push(newUser.id);
       }
 
       try {
@@ -145,12 +139,10 @@ describe('Courses', () => {
       const userCount = 11;
       const userIds = [];
       for (let i = 1; i <= userCount; i++) {
-        await prismaService.user.create({
-          data: {
-            id: i,
-          },
+        const newUser = await prismaService.user.create({
+          data: {},
         });
-        userIds.push(i);
+        userIds.push(newUser.id);
       }
 
       try {
@@ -167,7 +159,7 @@ describe('Courses', () => {
     });
   });
 
-  afterEach(async () => {
+  afterAll(async () => {
     await prismaService.courseUser.deleteMany();
     await prismaService.course.deleteMany();
     await prismaService.user.deleteMany();

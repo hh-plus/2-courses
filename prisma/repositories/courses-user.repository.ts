@@ -52,11 +52,15 @@ export class CoursesUserRepository implements CoursesUserModelPort {
     userId: number;
     transaction: Prisma.TransactionClient;
   }) {
-    await transaction.courseUser.create({
-      data: {
-        courseId,
-        userId,
-      },
-    });
+    try {
+      await transaction.courseUser.create({
+        data: {
+          courseId,
+          userId,
+        },
+      });
+    } catch (e) {
+      throw e;
+    }
   }
 }

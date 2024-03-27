@@ -35,6 +35,7 @@ export class CoursesController {
               courseId,
               transaction,
             });
+
             this.coursesService.checkFull({ course });
             await this.coursesService.checkDuplicate({
               userId,
@@ -61,6 +62,7 @@ export class CoursesController {
           continue;
         }
 
+        console.log(e, userId, courseId);
         throw e;
       }
     }

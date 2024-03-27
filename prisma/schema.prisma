@@ -27,10 +27,10 @@ model Course {
 model CourseUser {
   id Int @id @default(autoincrement())
 
-  course   Course @relation(fields: [courseId], references: [id])
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId Int
 
-  user   User @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int
 
   createdAt DateTime @default(now())
