@@ -5,24 +5,34 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import * as request from 'supertest';
 import { setDate } from './utils/setDate';
+import { setupPrismaService } from './utils/setTestContainer';
+import { PrismaClient } from '@prisma/client';
 
 describe('Courses', () => {
   let app: INestApplication;
-  let prismaService: PrismaService;
+
+  let prisma: PrismaClient;
 
   let createCourse = null;
+
+  jest.setTimeout(10000);
+
+  beforeAll(async () => {
+    prisma = await setupPrismaService();
+  });
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    })
+      .overrideProvider(PrismaService)
+      .useValue(prisma)
+      .compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
 
     moduleFixture.useLogger(false);
-
-    prismaService = moduleFixture.get<PrismaService>(PrismaService);
 
     createCourse = async ({
       title,
@@ -35,7 +45,7 @@ describe('Courses', () => {
     }) => {
       const startDate = setDate(calcurateStartDateNumber || 1);
 
-      return await prismaService.course.create({
+      return await prisma.course.create({
         data: {
           title,
           maxUsers,
@@ -45,9 +55,9 @@ describe('Courses', () => {
     };
 
     // 테스트 전에 데이터를 모두 삭제한다.
-    await prismaService.courseUser.deleteMany();
-    await prismaService.course.deleteMany();
-    await prismaService.user.deleteMany();
+    await prisma.courseUser.deleteMany();
+    await prisma.course.deleteMany();
+    await prisma.user.deleteMany();
   });
 
   it('특강에 신청을 하면 저장되어야 한다.', async () => {
@@ -59,7 +69,7 @@ describe('Courses', () => {
 
     const user = [];
     for (let i = 1; i <= userCount; i++) {
-      const newUser = await prismaService.user.create({
+      const newUser = await prisma.user.create({
         data: {},
       });
       user.push(newUser);
@@ -82,11 +92,11 @@ describe('Courses', () => {
       maxUsers: 1,
     });
 
-    const user1 = await prismaService.user.create({
+    const user1 = await prisma.user.create({
       data: {},
     });
 
-    const user2 = await prismaService.user.create({
+    const user2 = await prisma.user.create({
       data: {},
     });
 
@@ -111,7 +121,7 @@ describe('Courses', () => {
       const userCount = 5;
       const userIds = [];
       for (let i = 1; i <= userCount; i++) {
-        const newUser = await prismaService.user.create({
+        const newUser = await prisma.user.create({
           data: {},
         });
         userIds.push(newUser.id);
@@ -139,7 +149,7 @@ describe('Courses', () => {
       const userCount = 11;
       const userIds = [];
       for (let i = 1; i <= userCount; i++) {
-        const newUser = await prismaService.user.create({
+        const newUser = await prisma.user.create({
           data: {},
         });
         userIds.push(newUser.id);
@@ -157,12 +167,5 @@ describe('Courses', () => {
         expect(err).toBeDefined();
       }
     });
-  });
-
-  afterAll(async () => {
-    await prismaService.courseUser.deleteMany();
-    await prismaService.course.deleteMany();
-    await prismaService.user.deleteMany();
-    await app.close();
   });
 });

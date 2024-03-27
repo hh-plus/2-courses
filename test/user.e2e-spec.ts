@@ -11,21 +11,25 @@ import { PrismaService } from '@/prisma/prisma.service';
 describe('User', () => {
   let app: INestApplication;
   let prisma: PrismaClient;
-  let container;
+
+  jest.setTimeout(10000);
+
+  beforeAll(async () => {
+    prisma = await setupPrismaService();
+  });
+
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     })
       .overrideProvider(PrismaService)
-      .useValue(await setupPrismaService())
+      .useValue(prisma)
       .compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
 
     moduleFixture.useLogger(false);
-
-    prisma = await setupPrismaService();
   });
 
   describe('참가 성공과 실패의 string을 반환한다.', () => {
@@ -55,6 +59,7 @@ describe('User', () => {
         data: {},
       });
 
+      // console.log(newCourse);
       const apply1 = await request(app.getHttpServer())
         .post(`/courses/apply/${newCourse.id}`)
         .query({ userId: user1.id });
@@ -85,10 +90,5 @@ describe('User', () => {
 
       expect(body.message).toBe('신청 실패..');
     });
-  });
-
-  afterAll(async () => {
-    // 테스트 후 연결 해제 및 컨테이너 정지
-    await prisma.$disconnect();
   });
 });

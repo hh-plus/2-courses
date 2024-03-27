@@ -62,7 +62,6 @@ export class CoursesController {
           continue;
         }
 
-        console.log(e, userId, courseId);
         throw e;
       }
     }
