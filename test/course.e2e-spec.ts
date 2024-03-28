@@ -7,21 +7,20 @@ import * as request from 'supertest';
 import { setDate } from './utils/setDate';
 import { setupPrismaService } from './utils/setTestContainer';
 import { PrismaClient } from '@prisma/client';
+import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 
 describe('Courses', () => {
   let app: INestApplication;
 
+  let container: StartedPostgreSqlContainer;
   let prisma: PrismaClient;
 
   let createCourse = null;
 
   jest.setTimeout(10000);
 
-  beforeAll(async () => {
-    prisma = await setupPrismaService();
-  });
-
   beforeEach(async () => {
+    ({ container, prisma } = await setupPrismaService());
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     })
@@ -55,9 +54,6 @@ describe('Courses', () => {
     };
 
     // 테스트 전에 데이터를 모두 삭제한다.
-    await prisma.courseUser.deleteMany();
-    await prisma.course.deleteMany();
-    await prisma.user.deleteMany();
   });
 
   describe('GET /courses', () => {
@@ -75,7 +71,7 @@ describe('Courses', () => {
       const res = await request(app.getHttpServer())
         .get('/courses')
         .expect(200);
-      console.log(res.body);
+
       expect(res.body.length).toBe(2);
     });
   });
@@ -187,5 +183,9 @@ describe('Courses', () => {
         expect(err).toBeDefined();
       }
     });
+  });
+
+  afterEach(async () => {
+    await container.stop();
   });
 });

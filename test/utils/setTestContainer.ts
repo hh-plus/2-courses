@@ -17,14 +17,14 @@ async function setupTestContainer() {
     password: container.getPassword(),
   };
 
-  return connectionConfig;
+  return { container, connectionConfig };
 }
 
 export async function setupPrismaService() {
-  const connectionConfig = await setupTestContainer();
+  const { container, connectionConfig } = await setupTestContainer();
   const databaseUrl = `postgresql://${connectionConfig.user}:${connectionConfig.password}@${connectionConfig.host}:${connectionConfig.port}/${connectionConfig.database}`;
 
-  const result = await execAsync(
+  await execAsync(
     `DATABASE_URL=${databaseUrl} npx prisma migrate deploy --preview-feature`,
   );
 
@@ -36,5 +36,5 @@ export async function setupPrismaService() {
     },
   });
 
-  return prisma;
+  return { container, prisma };
 }

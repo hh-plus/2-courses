@@ -7,18 +7,17 @@ import * as request from 'supertest';
 import { setDate } from './utils/setDate';
 import { setupPrismaService } from './utils/setTestContainer';
 import { PrismaService } from '@/prisma/prisma.service';
+import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 
 describe('User', () => {
   let app: INestApplication;
   let prisma: PrismaClient;
+  let container: StartedPostgreSqlContainer;
 
   jest.setTimeout(10000);
 
-  beforeAll(async () => {
-    prisma = await setupPrismaService();
-  });
-
   beforeEach(async () => {
+    ({ container, prisma } = await setupPrismaService());
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     })
@@ -90,5 +89,9 @@ describe('User', () => {
 
       expect(body.message).toBe('신청 실패..');
     });
+  });
+
+  afterEach(async () => {
+    await container.stop();
   });
 });
