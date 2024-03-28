@@ -7,21 +7,20 @@ import * as request from 'supertest';
 import { setDate } from './utils/setDate';
 import { setupPrismaService } from './utils/setTestContainer';
 import { PrismaClient } from '@prisma/client';
+import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 
 describe('Courses', () => {
   let app: INestApplication;
 
+  let container: StartedPostgreSqlContainer;
   let prisma: PrismaClient;
 
   let createCourse = null;
 
   jest.setTimeout(10000);
 
-  beforeAll(async () => {
-    prisma = await setupPrismaService();
-  });
-
   beforeEach(async () => {
+    ({ container, prisma } = await setupPrismaService());
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     })
@@ -55,9 +54,26 @@ describe('Courses', () => {
     };
 
     // 테스트 전에 데이터를 모두 삭제한다.
-    await prisma.courseUser.deleteMany();
-    await prisma.course.deleteMany();
-    await prisma.user.deleteMany();
+  });
+
+  describe('GET /courses', () => {
+    it('정상적으로 강의 목록을 가져온다.', async () => {
+      await createCourse({
+        title: '특강',
+        maxUsers: 5,
+      });
+
+      await createCourse({
+        title: '특강2',
+        maxUsers: 5,
+      });
+
+      const res = await request(app.getHttpServer())
+        .get('/courses')
+        .expect(200);
+
+      expect(res.body.length).toBe(2);
+    });
   });
 
   it('특강에 신청을 하면 저장되어야 한다.', async () => {
@@ -167,5 +183,9 @@ describe('Courses', () => {
         expect(err).toBeDefined();
       }
     });
+  });
+
+  afterEach(async () => {
+    await container.stop();
   });
 });

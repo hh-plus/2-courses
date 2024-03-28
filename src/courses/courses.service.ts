@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CoursesRepositoryPort } from './port/courses.repository.interface';
+import { CoursesRepositoryPort } from './port/courses.repository.port';
 import { CoursesUserRepositoryPort } from './port/courses-user.repository.port';
 import { Course, Prisma, User } from '@prisma/client';
+import { CoursesMapper } from './courses.mapper';
 
 @Injectable()
 export class CoursesService {
@@ -9,6 +10,12 @@ export class CoursesService {
     private readonly coursesRepository: CoursesRepositoryPort,
     private readonly coursesUserRepository: CoursesUserRepositoryPort,
   ) {}
+
+  async getAll({}) {
+    const courses = await this.coursesRepository.getAll({});
+    const mappedCourses = CoursesMapper.toCurses(courses);
+    return mappedCourses;
+  }
 
   async getOneIncludeUsers({
     courseId,
