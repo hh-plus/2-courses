@@ -8,6 +8,7 @@ export class CoursesMapper {
       return {
         id: course.id,
         title: course.title,
+        maxUsers: course.maxUsers,
         startDate: course.startDate,
         createdAt: course.createdAt,
         userCount: course.user.length,

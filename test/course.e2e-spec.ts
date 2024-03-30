@@ -58,7 +58,7 @@ describe('Courses', () => {
 
   describe('GET /courses', () => {
     it('정상적으로 강의 목록을 가져온다.', async () => {
-      await createCourse({
+      const newCourse = await createCourse({
         title: '특강',
         maxUsers: 5,
       });
@@ -68,9 +68,22 @@ describe('Courses', () => {
         maxUsers: 5,
       });
 
+      const user1 = await prisma.user.create({
+        data: {},
+      });
+
+      await request(app.getHttpServer())
+        .post(`/courses/apply/${newCourse.id}`)
+        .query({ userId: user1.id })
+        .expect(201);
+
       const res = await request(app.getHttpServer())
         .get('/courses')
         .expect(200);
+
+      expect(res.body).toBeDefined();
+
+      expect(res.body[0].userCount).toBe(1);
 
       expect(res.body.length).toBe(2);
     });
